@@ -1,0 +1,10 @@
+{
+    "version": "0.1.0",
+    "command": "Chrome",
+    "windows": {
+        "command": "C:/Users/zy-kingder/AppData/Local/Google/Chrome/Application/chrome.exe"
+    },
+    //"isShellCommand": true,
+    "args": ["${file}"],
+    "showOutput": "never"
+}
