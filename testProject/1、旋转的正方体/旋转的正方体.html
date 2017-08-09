@@ -15,18 +15,26 @@
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); // 透视相机
         var renderer = new THREE.WebGLRenderer(); // 渲染器
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);//将这个domElement挂接在body下面，这样渲染的结果就能够在页面中显示了。
+        document.body.appendChild(renderer.domElement); //将这个domElement挂接在body下面，这样渲染的结果就能够在页面中显示了。
 
 
         var geometry = new THREE.CubeGeometry(1, 1, 1);
-        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        var material = new THREE.MeshBasicMaterial({
+            color: 0x00ff00
+        });
         var cube = new THREE.Mesh(geometry, material);
         scene.add(cube);
+        camera.position.z = 5;
 
-        var geometry = new THREE.CubeGeometry(1, 1, 1);
-        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        var cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        function render() {
+            requestAnimationFrame(render); //循环调用实现
+            cube.rotation.x += 0.1;
+            cube.rotation.y += 0.1;
+            cube.rotation.z+=0.1;
+            cube.position.z+=0.01;
+            renderer.render(scene, camera);
+        }
+        render();
     </script>
 </body>
 
