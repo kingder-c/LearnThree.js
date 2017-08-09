@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>旋转的正方体</title>
+    <script src="three.js"></script>
 </head>
 
 <body>
@@ -13,6 +14,19 @@
         var scene = new THREE.Scene(); // 场景
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); // 透视相机
         var renderer = new THREE.WebGLRenderer(); // 渲染器
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);//将这个domElement挂接在body下面，这样渲染的结果就能够在页面中显示了。
+
+
+        var geometry = new THREE.CubeGeometry(1, 1, 1);
+        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        var geometry = new THREE.CubeGeometry(1, 1, 1);
+        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
     </script>
 </body>
 
