@@ -3,35 +3,39 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>线</title>
+    <script src="../three.js">
 
-    <script src="three.js"></script>
-    <title>重构旋转的正方体</title>
-
-    <style type="text/css">
+    </script>
+    <style>
         div#canvas-frame {
             border: none;
             cursor: pointer;
             width: 100%;
             height: 600px;
-            background-color: #EEEEEE;
+            background-color: #eeeeee;
         }
     </style>
     <script>
+        //定义渲染器及渲染器的各个参数
         var renderer;
         function initThree() {
-            width = document.getElementById('canvas-frame').clientWidth;
-            height = document.getElementById('canvas-frame').clientHeight;
+            width = document.getElementById("canvas-frame").clientWidth;
+            height = document.getElementById("canvas-frame").clientHeight;
             renderer = new THREE.WebGLRenderer({
                 antialias: true
             });
             renderer.setSize(width, height);
-            document.getElementById('canvas-frame').appendChild(renderer.domElement);//给cavans附加子对象
-            renderer.setClearColor(0xFFFFFF, 1.0);
-        }
+            document.getElementById("canvas-frame").appendChild(renderer.domElement)
+            renderer.setClearColor(0xffffff, 1.0);
 
+        }
+        //定义相机和相机的基本参数
         var camera;
         function initCamera() {
-            camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+            camera = new THREE.PerspectiveCamera(45, width / height, 1, 100000);
             camera.position.x = 0;
             camera.position.y = 1000;
             camera.position.z = 0;
@@ -57,46 +61,43 @@
             scene.add(light);
         }
 
+
+
         var cube;
         function initObject() {
 
             var geometry = new THREE.Geometry();
-            var material = new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors });
-            var color1 = new THREE.Color(0x444444), color2 = new THREE.Color(0xFF0000);
+            var material = new THREE.LineBasicMaterial({ vertexColors: true });
+            var color1 = new THREE.Color(0x444444);
+            var color2 = new THREE.Color(0xFF0000);
 
-            // 线的材质可以由2点的颜色决定
+            //线的材质可以由两个点的颜色决定
             var p1 = new THREE.Vector3(-100, 0, 100);
             var p2 = new THREE.Vector3(100, 0, -100);
             geometry.vertices.push(p1);
             geometry.vertices.push(p2);
             geometry.colors.push(color1, color2);
 
-            var line = new THREE.Line(geometry, material, THREE.LinePieces);
+            //THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead.
+            var line = new THREE.Line(geometry, material, THREE.LineSegments);
             scene.add(line);
+
         }
-        function render() {
-            renderer.clear();
-            renderer.render(scene, camera);
-            requestAnimationFrame(render);
-        }
+
         function threeStart() {
             initThree();
             initCamera();
             initScene();
             initLight();
             initObject();
-            render();
+            renderer.clear();
+            renderer.render(scene, camera);
         }
     </script>
-
 </head>
 
 <body onload="threeStart();">
     <div id="canvas-frame"></div>
-    <!-- <script>
-        threeStart();
-
-    </script> -->
 </body>
 
 </html>
