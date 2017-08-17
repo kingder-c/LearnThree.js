@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TestProject</title>
+    <script src="../three.js"></script>
+</head>
+
+<body>
+
+    <script>
+        
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth/ window.innerHeight, 0.1, 1000);//一定要注明相机类型
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor("#FFFFFF")
+
+        renderer.setSize(window.innerWidth,window.innerHeight);
+
+        document.body.appendChild(renderer.domElement);//渲染器会场申一个对象就是domElement,把这个对象添加到body上
+        
+        var geometry=new THREE.CubeGeometry(1,1,1);
+        var material=new THREE.MeshBasicMaterial({color:0xff0000});
+
+        var cube=new THREE.Mesh(geometry,material);
+
+        scene.add(cube);
+
+        camera.position.z=5;
+
+        function Render(){
+            requestAnimationFrame(Render);//该函数不需要加括号
+
+            cube.rotation.x+=0.1;
+            renderer.render(scene,camera);
+        }
+        Render();
+    </script>
+
+</body>
+
+</html>
