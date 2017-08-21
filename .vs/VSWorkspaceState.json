@@ -6,6 +6,10 @@
     "\\testProject\\6.把模型导入到three.js",
     "\\testProject\\7.相机的工作原理"
   ],
+<<<<<<< HEAD
   "SelectedNode": "\\testProject\\7.相机的工作原理\\123.js",
+=======
+  "SelectedNode": "\\testProject\\7.相机的工作原理",
+>>>>>>> e7468838b4d98aad4f3e28c329dcf488b1ddfcb1
   "PreviewInSolutionExplorer": false
 }
