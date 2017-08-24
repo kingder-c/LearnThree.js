@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>developerWorks WebGL SceneJS Big Data Visualization Example</title>
+    <meta charset="utf-8">
+    <script src="./scenejs.js"></script>
+<script>
+  var mouse = {x: 0, y: 0, updated: false, clicked: false};
+  var monthLabels = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var yearLabels = ["2004","2005","2006","2007","2008","2009","2010","2011","2012","2013"];
+  var PeakThreshold = 97;
+  var HighThreshold = 93;
+
+   var data = [];
+   var node2Data = {};
+
+   function initData() {
+     for (var dim=0; dim<100; dim++)  {
+        var axis = [];
+        var datacenter = String.fromCharCode(65 + Math.floor(dim /26)) + String.fromCharCode(65 + (dim % 26));
+        for (var i=0; i<100; i++) {
+            var val = Math.floor(Math.random() * 100 + 1);
+            var dpoint = { 
+               location: datacenter,
+               year: yearLabels[ Math.floor(i /12)],
+               month: monthLabels[ i % 12],
+               value: val};
+
+            axis.push(dpoint);
+        }
+        data.push(axis);
+
+     }
+   }
+
+    SceneJS.setConfigs({
+        pluginPath:"./plugins"
+    });
+
+
+    var coreScene = {
+        nodes:[
+            {
+                id: "light1",
+                type:"lights",
+                lights:[
+                            {
+                                mode:"dir",
+                                color:{ r:1.0, g:1.0, b:1.0 },
+                                diffuse:true,
+                                specular:true,
+                                dir:{ x:-5, y:-2, z:-5 },
+                                space:"view"
+                            }
+                ]
+
+            }
+        ]
+    };
+
+   
+   
+   var scene = undefined;
+   function setUp() {
+     scene = SceneJS.createScene({
+        canvasId: "shapecanvas2",
+            nodes: 
+             [
+                { type:"cameras/orbit",            
+                  look:{ x: 80, y:0 },
+                  yaw: 0,
+                  pitch: -20,
+                  zoom: 200,
+                  zoomSensitivity:10.0,
+
+                  nodes: [coreScene]
+                }
+            
+              ]
+        });
+  
+    initData();
+    scene.getNode("light1", function(light) {
+      var zpos = 0;
+      data.forEach(function(dim) {
+        zpos++;
+        var xpos = 0;
+        dim.forEach(function(dpoint) {
+          var curVal = dpoint["value"];
+          var curColor = ((curVal > PeakThreshold) ? { r: 1, g:0, b:0} : 
+             ((curVal > HighThreshold) ? {r:1, g:1, b:0} : {r:0, g:1, b:0}));
+          var nodeName = "n" + zpos + "m" + xpos ;
+          node2Data[nodeName] = dpoint;
+          light.addNode(
+              { type: "name",
+                name: nodeName,
+                nodes: [
+                   {
+                   type: "material",
+                    color: curColor,
+                
+                     nodes:[   {
+                            type:"translate",
+                            y: curVal/10,
+                            x: xpos++,
+                            z: zpos,
+                            nodes:[
+                            {
+                                            type:"prims/box",
+                                            xSize: 1,
+                                            ySize: curVal/10,
+                                            zSize: 1
+                            }
+                            ]
+                        }
+                        ]
+                      }
+                      ]
+                    }
+              );
+          });  // dim.forEach
+      });  // data.forEach
+   });  // scene.getNode("light1")
+ 
+
+ scene.on("pick",
+  function (hit) {
+       var name = hit.name;
+
+    var datapoint = node2Data[hit.name];
+    document.getElementById("dmonth").innerHTML = datapoint["month"];
+    document.getElementById("dyear").innerHTML = datapoint["year"];
+    document.getElementById("dcenter").innerHTML = datapoint["location"];
+    if (mouse.clicked)  {
+      //simulate dive into  detailed data 
+      alert("Show daily detailed reports for " + datapoint["month"] + ", " 
+        + datapoint["year"] +  " at data center location " 
+        + datapoint["location"]);
+    mouse.clicked = false;
+   }
+     
+  });
+
+ var canvas = scene.getCanvas();
+
+ canvas.addEventListener('mousemove', 
+    function(event) {
+      mouse = {x: event.clientX, y: event.clientY, updated: false, clicked: false};
+     
+    }, 
+    false);
+ 
+ canvas.addEventListener('mousedown', 
+    function(event) {
+      mouse = {x: event.clientX, y: event.clientY, updated: false, clicked: true};
+     
+    }, 
+    false);
+ 
+
+
+scene.on("tick", function() {
+   if (!mouse.updated) {
+     scene.pick(mouse.x, mouse.y);
+     mouse.updated = true;
+   }
+});
+
+var status = document.createElement('div');
+var month = document.createElement('span');
+var dcenter = document.createElement('span');
+var year = document.createElement('span');
+
+dcenter.innerHTML = "??";
+month.innerHTML = "???";
+year.innerHTML = "????";
+status.style.cssText = "position:absolute;width:300;height:200;color:rgba(255,255,255,0.3);background-color:rgba(0,0,0,0);top:20px;left:150px;font:bold 75px arial,sans-serif";
+dcenter.style.cssText = "position:relative;left:5px;top:0px";
+month.style.cssText= "position:relative;left:350px;top:0px";
+year.style.cssText = "position:relative;left:400px;top:0px";
+dcenter.setAttribute("id", "dcenter");
+month.setAttribute("id","dmonth");
+year.setAttribute("id","dyear");
+
+status.appendChild(dcenter);
+status.appendChild(month);
+status.appendChild(year);
+
+document.getElementById("container").appendChild(status);
+
+  
+}  // setup
+
+
+
+
+</script>
+</head>
+<body onload="setUp()">
+<span id="container" width="1024" height="500">
+  <canvas id="shapecanvas2" style="border: none;" width="1024" height="500"></canvas>
+</span>
+  <br/>
+  </body>
+</html>

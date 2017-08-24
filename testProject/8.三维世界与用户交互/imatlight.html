@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <title>developerWorks WebGL Three.js Interactive Lights and Shadows Effect Example</title>
+  <script src="Three.js" ></script>
+  <script src="js/controls/OrbitControls.js"></script>
+
+  <script type="text/javascript">
+  
+ 
+  function draw3D()  {
+
+     var controls;
+       
+    function animate() {
+      requestAnimationFrame(animate);
+
+      pyramid1.rotateY(Math.PI/180);
+      sphere.rotateY(Math.PI/180);
+      cube.rotateY(Math.PI/180);
+      multi.rotateY(Math.PI/480);
+      renderer.render(scene, camera);
+      
+    }
+    function updateControls() {
+      controls.update();
+    }
+
+
+    var geo = new THREE.CylinderGeometry(0,2,2,4,1, true);
+    var pyramid1 = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({color: 0xff0000}));
+    pyramid1.position.set(-2.5, -1, 0);
+
+    geo = new THREE.SphereGeometry(1, 25, 25);
+    var sphere = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({color: 0x00ff00}));
+    sphere.position.set(2.5, -1, 0);
+
+    geo = new THREE.CubeGeometry(2,2,2);
+    var cube = new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color: 0x0000ff })   );
+    cube.position.set(0, 1, 0);
+
+    
+    var camera = new THREE.PerspectiveCamera(  45, 1024/500,0.1, 100);       
+    camera.position.z = 10;
+    camera.position.y = 1;
+
+    controls = new THREE.OrbitControls( camera );
+    controls.addEventListener( 'change', updateControls );
+
+
+    var multi = new THREE.Object3D();
+    pyramid1.castShadow = true; sphere.castShadow = true; 
+    multi.add(cube);
+    multi.add(pyramid1);
+    multi.add(sphere);
+    multi.position.z = 0;  
+    
+
+    geo = new THREE.PlaneGeometry(20, 25);
+    var floor = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color : 0xcfcfcf}));
+    floor.material.side = THREE.DoubleSide;
+    floor.rotation.x = Math.PI/2;
+    floor.position.y = -2;
+    floor.receiveShadow = true;
+    
+    var light = new THREE.DirectionalLight(0xe0e0e0);
+    light.position.set(5,2,5).normalize();
+    light.castShadow = true;
+    light.shadowDarkness = 0.5;
+    light.shadowCameraRight = 5;
+    light.shadowCameraLeft = -5;
+    light.shadowCameraTop = 5;
+    light.shadowCameraBottom = -5;
+    light.shadowCameraNear = 2;
+    light.shadowCameraFar = 100;
+
+    
+    var scene = new THREE.Scene();
+    scene.add(floor);
+    scene.add(multi);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x101010));
+
+
+    var div = document.getElementById("shapecanvas2");      
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(1024,500);
+    renderer.setClearColor(0x000000, 1);
+    renderer.shadowMapEnabled = true;
+    div.appendChild( renderer.domElement );
+
+
+    animate();
+    
+  }
+
+</script>
+
+
+
+</head>
+<body onload="draw3D();">
+
+  <span id="shapecanvas2" style="border: none;" width="1024" height="500"></span>
+
+  <br/>
+  </body>
+  
+
+</html>
